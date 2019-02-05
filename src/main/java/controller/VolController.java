@@ -17,6 +17,6 @@ public class VolController {
 	
 	@GetMapping("/list")
 	public ModelAndView list() {
-		return new ModelAndView("vol/list", "vols", daoVol.findAll());
+		return new ModelAndView("vol/vol", "vols", daoVol.findAll());
 	}
 }
