@@ -1,10 +1,13 @@
 package controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -69,6 +72,7 @@ public class VolController {
 
 	public ModelAndView goEdit(Vol vol, Integer i) {
 		ModelAndView modelAndView = new ModelAndView("vol/edit");
+		
 		modelAndView.addObject("vol", vol);
 		modelAndView.addObject("i", i);
 		modelAndView.addObject("aeroports", daoAeorport.findAll());
@@ -76,20 +80,22 @@ public class VolController {
 	}
 	
 	@GetMapping("/savedepart")
-	public ModelAndView saveDepart(Vol vol, BindingResult br, Model model) {
+	public ModelAndView saveDepart(@ModelAttribute("vol") Vol vol, BindingResult br, Model model) {
 		if (br.hasErrors()) {
 			return editDepart(vol.getId());
 		}
-		if	(vol.getDepart()!=null && vol.getDepart().getId()!=null) {
+		if	(vol.getDepart()!=null && vol.getDepart().getId()==null) {
 				vol.setDepart(null);
 			}
-		
+		if	(vol.getArrivee()!=null && vol.getArrivee().getId()==null) {
+			vol.setArrivee(null);
+		}
 		daoVol.update(vol);
 		return list();
 	}
 	
 	@GetMapping("/saveescale")
-	public ModelAndView saveEscale(Vol vol, BindingResult br, Model model) {
+	public ModelAndView saveEscale(@ModelAttribute("vol") Vol vol, BindingResult br, Model model) {
 		if (br.hasErrors()) {
 			return editEscale(vol.getId());
 		}
@@ -98,19 +104,20 @@ public class VolController {
 	}
 	
 	@GetMapping("/savearrivee")
-	public ModelAndView saveArrivee(Vol vol, BindingResult br, Model model) {
+	public ModelAndView saveArrivee(@ModelAttribute("vol") Vol vol, BindingResult br, Model model) {
 		if (br.hasErrors()) {
 			return editArrivee(vol.getId());
 		}
-		Aeroport aeroport = vol.getArrivee();
-		daoAeorport.update(aeroport);
+		if	(vol.getArrivee()!=null && vol.getArrivee().getId()==null) {
+			vol.setArrivee(null);
+		}
 		daoVol.update(vol);
 		
 		return list();
 	}
 	
 	@GetMapping("/save")
-	public ModelAndView save(Vol vol, BindingResult br, Model model) {
+	public ModelAndView save(@ModelAttribute("vol") Vol vol, BindingResult br, Model model) {
 		if (br.hasErrors()) {
 			return editArrivee(vol.getId());
 		}
